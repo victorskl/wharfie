@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# Quick and simple docker image backup script
+# Utilizing the 'docker save' command:
+# https://docs.docker.com/engine/reference/commandline/save/
+#
+# Daily at 3:29am
+# crontab -l -u root
+# crontab -e -u root
+# 29 3 * * * /root/docker_backup.sh >> /root/docker_backup.log 2>&1
+#
+# (OR)
+# Daily at 6:25am; just drop to system cron.daily
+# ln -s /root/docker_backup.sh /etc/cron.daily/
+
+BACKUP_DIR=/mnt/docker_backup
+
+NOW=`date +%Y%m%d`
+FULL_PATH=${BACKUP_DIR}/${NOW}
+mkdir -p ${FULL_PATH}
+
+echo Running docker backup  ${FULL_PATH}
+
+# TODO: declare images to be backup in an array and iterate this
+docker save --output ${FULL_PATH}/stg_api.tar stg_api:latest
+docker save --output ${FULL_PATH}/stg_worker.tar stg_worker:latest
+docker save --output ${FULL_PATH}/stg_web.tar stg_web:latest
+
+echo Done.
