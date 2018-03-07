@@ -1,0 +1,11 @@
+#!/bin/bash
+
+CNT=$(docker images -f "dangling=true" -q|wc -l)
+
+if [ "$CNT" -gt 0 ]
+then
+  echo "Cleaning dangling docker images..."
+  docker rmi $(docker images -f "dangling=true" -q)
+else
+  echo "Docker image store is optimal."
+fi

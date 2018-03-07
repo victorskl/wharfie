@@ -7,13 +7,13 @@
 # Daily at 3:29am
 # crontab -l -u root
 # crontab -e -u root
-# 29 3 * * * /root/docker_backup.sh >> /root/docker_backup.log 2>&1
+# 29 3 * * * /root/docker-backup >> /root/docker-backup.log 2>&1
 #
 # (OR)
 # Daily at 6:25am; just drop to system cron.daily
-# ln -s /root/docker_backup.sh /etc/cron.daily/
+# ln -s /root/docker-backup /etc/cron.daily/
 
-BACKUP_DIR=/mnt/docker_backup
+BACKUP_DIR=/mnt/backup
 
 NOW=`date +%Y%m%d`
 FULL_PATH=${BACKUP_DIR}/${NOW}

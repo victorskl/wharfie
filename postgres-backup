@@ -1,0 +1,22 @@
+#!/bin/bash
+
+BACKUP_DIR=/backup/postgresql
+
+NOW=`date +%Y%m%d`
+FULL_PATH=${BACKUP_DIR}/${NOW}
+mkdir -p ${FULL_PATH}
+
+echo Running PostgreSQL DB backup  ${FULL_PATH}
+
+# Require ~/.pgpass  https://www.postgresql.org/docs/current/static/libpq-pgpass.html
+# For pg_dump flags  https://www.postgresql.org/docs/current/static/app-pgdump.html
+# Note that we will use -Fc flag, so that, when pg_restore, we can make use of -j flag
+#  for concurrent restore.
+#  https://www.postgresql.org/docs/current/static/app-pgrestore.html
+#  https://dan.langille.org/2013/06/10/using-compression-with-postgresqls-pg_dump/
+#
+
+pg_dump -w -Fc -f ${FULL_PATH}/apidb.Fc -U dbuser -h localhost -d apidb
+# time pg_restore -j 8 -d apidb apidb.Fc
+
+echo Done.
