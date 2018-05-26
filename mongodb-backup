@@ -1,6 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-BACKUP_DIR=/backup/mongodb
+# Required
+# apt install mongodb-org-tools gzip
+# https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
+
+# How to use
+# cp mongodb-backup /etc/cron.daily/z_mongodb-backup
+# chmod +x /etc/cron.daily/z_mongodb-backup
+# run-parts --test /etc/cron.daily
+
+BACKUP_DIR=/mnt/backup/mongodb
 
 NOW=`date +%Y%m%d`
 FULL_PATH=${BACKUP_DIR}/${NOW}
@@ -13,9 +22,7 @@ echo Running MongoDB backup  ${ARCHIVE}
 # https://www.mongodb.com/blog/post/archiving-and-compression-in-mongodb-tools
 mongodump -d mydb_name --gzip --archive=${ARCHIVE}
 
-# To restore - use like this so:  mongorestore --gzip --archive=20180228.archive
+# To restore - use like this so:
+#  mongorestore --gzip --archive=20180228.archive
 
 echo Done
-
-# How to use
-# cp mongodb-backup /etc/cron.daily/z_mongodb-backup

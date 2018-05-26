@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# Required
+# apt install mysql-client gzip
+
+# How to use
+# cp mysql-backup /etc/cron.daily/z_mysql-backup
+# chmod +x /etc/cron.daily/z_mysql-backup
+# run-parts --test /etc/cron.daily
+
+BACKUP_DIR=/mnt/backup/mysqldb
+
+NOW=`date +%Y%m%d`
+FULL_PATH=${BACKUP_DIR}/${NOW}
+#mkdir -p ${FULL_PATH}
+
+ARCHIVE=${FULL_PATH}.sql.gz
+
+echo Running MySQLDB backup  ${ARCHIVE}
+
+# login info at ~/.my.cnf with the following entry
+#     [mysqldump]
+#     user=db_user
+#     password=secret
+# https://dev.mysql.com/doc/refman/5.7/en/option-files.html
+
+mysqldump --protocol=tcp --host=127.0.0.1 --port=3306 mydbname | gzip > ${ARCHIVE}
+
+# To restore - use like this so:
+#  gzip -d 20180512.sql.gz
+#  https://dev.mysql.com/doc/mysql-backup-excerpt/5.7/en/reloading-sql-format-dumps.html
+
+echo Done
