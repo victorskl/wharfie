@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+# Setup certbot in standalone mode using port :10000
+# https://certbot.eff.org/docs/using.html#standalone
+# e.g.
+# certbot certonly --standalone --rsa-key-size 4096 \
+# --preferred-challenges http \
+# --http-01-port 10000 \
+# --noninteractive --agree-tos \
+# --email my@email.com \
+# -d my.domain.com
+#
+# Observe certbot:
+#  certbot certificates
+#  systemctl|grep certbot
+#  locate certbot.timer
+#  less /etc/systemd/system/timers.target.wants/certbot.timer
+#  systemctl status certbot
+#  locate certbot.service
+#  less /lib/systemd/system/certbot.service
+#
+# Use HAProxy or Nginx to front /.well-known/acme-challenge and reverse proxy to :10000
+#
+# e.g. HAProxy config
+#
+#    frontend myapp
+#        bind *:443 ssl crt /etc/haproxy/certs/my.domain.com.pem
+#        acl letsencrypt-acl path_beg /.well-known/acme-challenge/
+#        http-request add-header X-Forwarded-Proto https if { ssl_fc } !letsencrypt-acl
+#        redirect scheme https code 301 if !{ ssl_fc } !letsencrypt-acl
+#        use_backend letsencrypt if letsencrypt-acl
+#    backend letsencrypt
+#        server letsencrypt 127.0.0.1:10000
+#
+# e.g. Nginx config
+#
+#    upstream certbot {
+#        server 127.0.0.1:10000;
+#    }
+#    server {
+#        location ^~ /.well-known/acme-challenge/ {
+#            try_files $uri @proxy_to_certbot;
+#        }
+#
+#        location @proxy_to_certbot {
+#            proxy_pass http://certbot;
+#        }
+#
+#        location ~* (?:^|/)\. {
+#            deny all;
+#        }
+#
+#        listen 443 ssl;
+#        ssl_certificate /etc/letsencrypt/live/my.domain.com/fullchain.pem;
+#        ssl_certificate_key /etc/letsencrypt/live/my.domain.com/privkey.pem;
+#
+#        if ($scheme = http) {
+#            return 301 https://$host$request_uri;
+#        }
+#    }
+#
+# To deploy, drop into /etc/cron.daily/ OR /etc/letsencrypt/renewal-hooks/post/
+# as stated in https://certbot.eff.org/docs/using.html#renewing-certificates
+
+# set certificate domain name
+DOMAIN="my.domain.com"
+
+# set path to live certificates
+LIVE="/etc/letsencrypt/live"
+
+# set haproxy certs location
+HA="/etc/haproxy/certs"
+
+FC="${LIVE}/${DOMAIN}/fullchain.pem"
+PK="${LIVE}/${DOMAIN}/privkey.pem"
+
+cat ${FC} ${PK} > ${HA}/${DOMAIN}.pem
+
+systemctl restart haproxy
+#systemctl restart nginx
