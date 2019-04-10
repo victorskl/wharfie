@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+WP_CONTENT_DIR=/mnt/wordpress/wp-content
+BACKUP_DIR=/mnt/backup/wordpress
+
+NOW=`date +%Y%m%d`
+
+WP_CONTENT_ARCHIVE=wp-content-${NOW}.tar.gz
+echo "Running wp-content backup ${WP_CONTENT_ARCHIVE}"
+tar -czf ${BACKUP_DIR}/${WP_CONTENT_ARCHIVE} ${WP_CONTENT_DIR}

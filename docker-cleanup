@@ -1,11 +1,25 @@
 #!/usr/bin/env bash
 
-CNT=$(docker images -f "dangling=true" -q|wc -l)
+# Cleaning dangling images in older version of docker
+#
+#CNT=$(docker images -f "dangling=true" -q|wc -l)
+#
+#if [[ "$CNT" -gt 0 ]]
+#then
+#  echo "Cleaning dangling docker images..."
+#  docker rmi $(docker images -f "dangling=true" -q)
+#else
+#  echo "Docker image store is optimal."
+#fi
 
-if [ "$CNT" -gt 0 ]
-then
-  echo "Cleaning dangling docker images..."
-  docker rmi $(docker images -f "dangling=true" -q)
-else
-  echo "Docker image store is optimal."
-fi
+# Cleaning dangling images as well as BuildKit caches for docker v18.09 and above; See
+# https://docs.docker.com/config/pruning/
+# https://docs.docker.com/engine/reference/commandline/image_prune/
+# https://docs.docker.com/engine/reference/commandline/builder_prune/
+# https://docs.docker.com/engine/reference/commandline/system_df/
+
+echo "Cleaning dangling docker images..."
+docker image prune --force #--all --filter "until=24h"
+
+echo "Cleaning docker builder caches..."
+docker builder prune --force #--all --filter "unused-for=24h"
