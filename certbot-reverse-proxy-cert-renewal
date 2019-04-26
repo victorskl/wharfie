@@ -15,6 +15,11 @@
 #  systemctl|grep certbot
 #  locate certbot.timer
 #  less /etc/systemd/system/timers.target.wants/certbot.timer
+#  systemctl list-timers certbot.timer
+#
+#  NOTE: certbot.timer will start certbot.service at scheduled time interval
+#    therefore, certbot.service won't run in background all the time!
+#
 #  systemctl status certbot
 #  locate certbot.service
 #  less /lib/systemd/system/certbot.service
@@ -61,7 +66,27 @@
 #
 # To deploy, drop into /etc/cron.daily/ OR /etc/letsencrypt/renewal-hooks/post/
 # as stated in https://certbot.eff.org/docs/using.html#renewing-certificates
-
+#
+# Alternatively, create /etc/letsencrypt/renewal/example.com.conf with content:
+#
+#    # renew_before_expiry = 30 days
+#    version = 0.19.0
+#    archive_dir = /etc/letsencrypt/archive/example.com
+#    cert = /etc/letsencrypt/live/example.com/cert.pem
+#    privkey = /etc/letsencrypt/live/example.com/privkey.pem
+#    chain = /etc/letsencrypt/live/example.com/chain.pem
+#    fullchain = /etc/letsencrypt/live/example.com/fullchain.pem
+#
+#    # Options used in the renewal process
+#    [renewalparams]
+#    authenticator = nginx
+#    installer = nginx
+#    account = abcd123456efghij789875
+#
+# To find your certbot account ID, ll /etc/letsencrypt/accounts/acme-v01.api.letsencrypt.org/directory/
+# https://letsencrypt.org/docs/account-id/
+#
+#
 # set certificate domain name
 DOMAIN="my.domain.com"
 
