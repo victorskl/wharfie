@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+declare -a DIRS=(/backup/app /backup/db /backup/content)
+THRESHOLD=36
+
+for DIR in "${DIRS[@]}"
+do
+    CNT=`ls -rt ${DIR} | wc -l`
+
+    if [[ ${CNT} -gt ${THRESHOLD} ]]; then
+        cd ${DIR} && ls -tp ${DIR} | grep -v '/$' | tail -n +${THRESHOLD} | xargs -d '\n' -r rm --
+    fi
+
+done
