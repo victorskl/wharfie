@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 # Required
-# apt install postgresql-client
+#   apt install postgresql-client
+# Or try install from official Ubuntu https://www.postgresql.org/download/linux/ubuntu/
+#   apt install postgresql-client-9.6
 
 # How to use
 # cp postgresql-backup /etc/cron.daily/z_postgresql-backup

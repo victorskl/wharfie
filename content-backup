@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+CONTENT_DIR=/mnt/content
+BACKUP_DIR=/mnt/backup/content
+
+NOW=`date +%Y%m%d`
+
+CONTENT_ARCHIVE=content-${NOW}.tar.gz
+echo "Running content backup ${CONTENT_ARCHIVE}"
+tar -czf ${BACKUP_DIR}/${CONTENT_ARCHIVE} ${CONTENT_DIR}

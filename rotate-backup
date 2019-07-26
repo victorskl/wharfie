@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# DIRS: array of directories that contains daily backup
+# THRESHOLD: any thing more than this threshold will be purged
+#    e.g. if it is daily backup then this equate any backup older than 36 days
+#
 declare -a DIRS=(/backup/app /backup/db /backup/content)
 THRESHOLD=36
 
